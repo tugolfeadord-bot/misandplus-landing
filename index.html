@@ -3,12 +3,414 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <title>MisAndPlus — Control real del food cost</title>
   <meta name="description" content="Controla food cost, recetas, inventario y rentabilidad desde un solo lugar. Sin Excel. Sin caos." />
-  <link rel="stylesheet" href="style.css" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #071225;
+      color: #f8fafc;
+      line-height: 1.6;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .container {
+      width: min(1120px, 90%);
+      margin: 0 auto;
+    }
+
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(7, 18, 37, 0.92);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .nav {
+      min-height: 82px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.45rem;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      white-space: nowrap;
+    }
+
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      border-radius: 13px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, #ff7a00, #ff9f43);
+      color: #071225;
+      font-weight: 900;
+      box-shadow: 0 12px 30px rgba(255,122,0,0.25);
+    }
+
+    .brand-text span {
+      color: #ff7a00;
+    }
+
+    .nav-cta {
+      background: #ff7a00;
+      color: #fff;
+      padding: 13px 18px;
+      border-radius: 16px;
+      font-weight: 800;
+      box-shadow: 0 14px 30px rgba(255,122,0,0.25);
+      white-space: nowrap;
+    }
+
+    .hero {
+      padding: 92px 0 90px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 70px;
+      align-items: center;
+    }
+
+    .eyebrow {
+      color: #ff7a00;
+      font-size: 0.82rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: clamp(3rem, 7vw, 5.6rem);
+      line-height: 0.98;
+      letter-spacing: -0.075em;
+      margin-bottom: 28px;
+      max-width: 820px;
+    }
+
+    .hero-text {
+      color: #b8c2d2;
+      font-size: clamp(1.08rem, 2.5vw, 1.35rem);
+      max-width: 660px;
+      margin-bottom: 34px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 22px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 56px;
+      padding: 0 24px;
+      border-radius: 18px;
+      font-weight: 800;
+      font-size: 1rem;
+    }
+
+    .btn-primary {
+      background: #ff7a00;
+      color: #fff;
+      box-shadow: 0 16px 35px rgba(255,122,0,0.28);
+    }
+
+    .btn-secondary {
+      border: 1px solid rgba(255,255,255,0.13);
+      color: #fff;
+      background: rgba(255,255,255,0.03);
+    }
+
+    .microcopy {
+      color: #8894a8;
+      font-size: 0.98rem;
+    }
+
+    .app-preview {
+      border: 1px solid rgba(255,255,255,0.08);
+      background: linear-gradient(180deg, #101b2f, #0b1628);
+      border-radius: 34px;
+      padding: 18px;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.42);
+    }
+
+    .preview-top {
+      display: flex;
+      gap: 8px;
+      padding: 8px 4px 18px;
+    }
+
+    .preview-top span {
+      width: 10px;
+      height: 10px;
+      border-radius: 99px;
+      background: rgba(255,255,255,0.18);
+    }
+
+    .preview-card,
+    .preview-insight,
+    .preview-grid > div {
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.035);
+      border-radius: 22px;
+      padding: 24px;
+      margin-bottom: 16px;
+    }
+
+    .preview-card p,
+    .preview-grid p,
+    .preview-insight p {
+      color: #98a4b7;
+      margin-bottom: 8px;
+    }
+
+    .preview-card strong {
+      display: block;
+      font-size: 3rem;
+      line-height: 1;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+
+    .preview-card small {
+      color: #22c55e;
+      font-weight: 700;
+    }
+
+    .preview-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .preview-grid strong {
+      font-size: 1.55rem;
+    }
+
+    .preview-insight {
+      border-color: rgba(255,122,0,0.22);
+    }
+
+    .preview-insight strong {
+      color: #ff7a00;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    section {
+      padding: 105px 0;
+    }
+
+    .narrow {
+      max-width: 780px;
+    }
+
+    h2 {
+      font-size: clamp(2.4rem, 5vw, 4.2rem);
+      line-height: 1.05;
+      letter-spacing: -0.06em;
+      margin-bottom: 24px;
+    }
+
+    .problem p,
+    .difference p,
+    .final-cta p {
+      color: #b8c2d2;
+      font-size: 1.15rem;
+      max-width: 760px;
+    }
+
+    .section-heading {
+      margin-bottom: 56px;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 22px;
+    }
+
+    .card {
+      background: #101b2f;
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 28px;
+      padding: 30px;
+      min-height: 250px;
+    }
+
+    .icon {
+      display: inline-grid;
+      place-items: center;
+      width: 48px;
+      height: 48px;
+      border-radius: 16px;
+      background: rgba(255,122,0,0.11);
+      color: #ff7a00;
+      font-size: 1.7rem;
+      font-weight: 900;
+      margin-bottom: 22px;
+    }
+
+    .card h3 {
+      font-size: 1.35rem;
+      margin-bottom: 14px;
+      letter-spacing: -0.03em;
+    }
+
+    .card p {
+      color: #aeb8c9;
+    }
+
+    .difference {
+      background: radial-gradient(circle at top left, rgba(255,122,0,0.10), transparent 38%);
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: 1fr 0.8fr;
+      gap: 70px;
+      align-items: center;
+    }
+
+    .final-cta {
+      text-align: center;
+    }
+
+    .final-cta .narrow {
+      margin: 0 auto;
+    }
+
+    .final-cta p {
+      margin: 0 auto 28px;
+    }
+
+    .footer {
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding: 36px 0;
+      color: #8d99ad;
+    }
+
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    .footer a {
+      color: #ff7a00;
+      font-weight: 700;
+    }
+
+    @media (max-width: 920px) {
+      .hero-grid,
+      .split {
+        grid-template-columns: 1fr;
+      }
+
+      .cards {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        padding: 70px 0 80px;
+      }
+
+      section {
+        padding: 82px 0;
+      }
+
+      .nav {
+        min-height: 76px;
+      }
+
+      .brand {
+        font-size: 1.25rem;
+      }
+
+      .brand-mark {
+        width: 38px;
+        height: 38px;
+        border-radius: 12px;
+      }
+
+      .nav-cta {
+        padding: 12px 15px;
+        border-radius: 15px;
+        font-size: 0.95rem;
+      }
+
+      .preview-card strong {
+        font-size: 2.5rem;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .container {
+        width: min(100% - 40px, 1120px);
+      }
+
+      .brand-text {
+        font-size: 1.18rem;
+      }
+
+      h1 {
+        font-size: 3.15rem;
+      }
+
+      .hero-text {
+        font-size: 1.08rem;
+      }
+
+      .btn {
+        width: 100%;
+      }
+
+      .hero-actions {
+        gap: 12px;
+      }
+
+      .preview-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .footer-inner {
+        flex-direction: column;
+      }
+    }
+  </style>
 </head>
 
 <body>
@@ -39,4 +441,139 @@
           </p>
 
           <div class="hero-actions">
-            <a href
+            <a href="https://app.misandplus.com/signup" class="btn btn-primary">
+              Probar gratis
+            </a>
+
+            <a href="#como-funciona" class="btn btn-secondary">
+              Ver cómo funciona
+            </a>
+          </div>
+
+          <p class="microcopy">
+            No reemplaza tu POS. Lo hace más rentable.
+          </p>
+        </div>
+
+        <div class="hero-visual">
+          <div class="app-preview">
+            <div class="preview-top">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+
+            <div class="preview-card">
+              <p>Food Cost %</p>
+              <strong>28.4%</strong>
+              <small>Saludable · margen protegido</small>
+            </div>
+
+            <div class="preview-grid">
+              <div>
+                <p>Margen bruto</p>
+                <strong>$18,420</strong>
+              </div>
+
+              <div>
+                <p>Recetas</p>
+                <strong>42</strong>
+              </div>
+            </div>
+
+            <div class="preview-insight">
+              <strong>Insight</strong>
+              <p>Tu plato más vendido no siempre es el más rentable.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="problem">
+      <div class="container narrow">
+        <h2>Muchos restaurantes venden. Pocos saben cuánto ganan.</h2>
+        <p>
+          Los precios cambian, las mermas se acumulan y las recetas terminan calculadas
+          “más o menos”. Ahí es donde empieza el caos financiero.
+        </p>
+      </div>
+    </section>
+
+    <section class="value" id="como-funciona">
+      <div class="container">
+        <div class="section-heading">
+          <p class="eyebrow">Mise en place financiero</p>
+          <h2>Menos administración. Más control.</h2>
+        </div>
+
+        <div class="cards">
+          <article class="card">
+            <span class="icon">%</span>
+            <h3>Food cost real</h3>
+            <p>Calcula automáticamente el costo de cada receta, ingrediente y porción.</p>
+          </article>
+
+          <article class="card">
+            <span class="icon">$</span>
+            <h3>Rentabilidad por plato</h3>
+            <p>Descubre qué platos realmente dejan dinero y cuáles solo ocupan espacio en tu cocina.</p>
+          </article>
+
+          <article class="card">
+            <span class="icon">↯</span>
+            <h3>Inventario simple</h3>
+            <p>Controla mermas, stock y movimientos sin procesos complicados ni pantallas eternas.</p>
+          </article>
+
+          <article class="card">
+            <span class="icon">⇄</span>
+            <h3>Compatible con tu operación</h3>
+            <p>Puedes registrar ventas manualmente o importar datos desde otros sistemas.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="difference">
+      <div class="container split">
+        <div>
+          <p class="eyebrow">No somos otro POS</p>
+          <h2>Tu POS registra ventas. MisAndPlus te dice si ganas dinero.</h2>
+        </div>
+
+        <p>
+          Tu sistema actual registra ventas. MisAndPlus convierte esos datos en decisiones
+          financieras reales para tu cocina.
+        </p>
+      </div>
+    </section>
+
+    <section class="final-cta">
+      <div class="container narrow">
+        <h2>Del Excel a la claridad en minutos.</h2>
+        <p>
+          No necesitas ser contador ni administrador. MisAndPlus habla el idioma de los chefs:
+          recetas, costos y ganancias reales.
+        </p>
+
+        <a href="https://app.misandplus.com/signup" class="btn btn-primary">
+          Empieza gratis
+        </a>
+
+        <p class="microcopy">Sin tarjetas de crédito.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <p>© 2026 MisAndPlus</p>
+      <p>Control financiero gastronómico simple y moderno.</p>
+      <p>
+        <a href="mailto:hola@misandplus.com">hola@misandplus.com</a>
+      </p>
+    </div>
+  </footer>
+</body>
+  </html>
